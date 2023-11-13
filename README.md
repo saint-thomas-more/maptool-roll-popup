@@ -23,11 +23,11 @@ Can be used for blind rolls through ` [gm:] ` with the included calling macro.
 
 ## Ripping the skills array
 
-- Open your `.json` in Notepad, for example.
-- Find the array:
+1. Open your `.json` in Notepad, for example.
+2. Find the array:
 	` "skills": [...] `.
-- Copy the brackets and their content.
-- Paste into the property.
+3. Copy the brackets and their content.
+4. Paste into the property.
 
 ## MapTool properties
 
@@ -68,6 +68,9 @@ Can be used for blind rolls through ` [gm:] ` with the included calling macro.
 ***
 ## Use tips
 
+1. Impersonate a token
+2. Choose a `Roll` or a `Blind Roll` calling macro
+***
 - ` Alt + Down Arrow ` to open the drop-down menu.
 - The calling macros are going to work as long as the Backend macro is in the same library.
 - ` [r: Output] ` can be included in the end to turn into a self-sufficient rolling macro.
