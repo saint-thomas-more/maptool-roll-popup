@@ -10,8 +10,13 @@ Displays colored crits; margin of success or failure.
 
 Can be used for blind rolls through ` [gm:] ` with the included calling macro.
 
+![2023-11-13_22-20](https://github.com/saint-thomas-more/maptool-roll-popup/assets/126619536/0e00a1c4-3dee-4823-972d-c904937771d4)
+
 ## Possible output
 ` ST⁠–10, modifiers: +2+3-2 -1+10 =>  10 vs (22): succeeded by 12 `
+
+![2023-11-13_22-21](https://github.com/saint-thomas-more/maptool-roll-popup/assets/126619536/0d8fdcb7-3ec0-4dd4-8a4d-dfcd6f622367)
+
 ***
 ## GCA
 
