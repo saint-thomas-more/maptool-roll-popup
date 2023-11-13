@@ -1,1 +1,248 @@
-<!-- A MapTool macro for rolling from JSON and more for GURPS by Emdis -->[h: SkillArray = getProperty("skills") ][h: Attributes = json.set("{}", "ST", getProperty("ST"), "DX", getProperty("DX"), "IQ", getProperty("IQ"), "HT", getProperty("HT"), "Will", getProperty("Will"), "Per", getProperty("Per") ) ][h: skillNames = "[]" ][h: Symbols = json.set("{}",	"\=", "+", 	"\_", "-",	"\!", "1",	"\@", "2",	"\#", "3",	"\$", "4",	"\%", "5",	"\^", "6",	"\&", "7",	"\*", "8",	"\(", "9",	"\)", "0") ]<!-- Iterates skill objects inside the SkillArray and saves their names -->[h, foreach(skill, SkillArray), code: 	{	[h: curName = json.get(skill,"name") ]		[h: skillNames = json.append(skillNames, curName) ]	}][h: STRskillNames = json.toList(skillNames) ]<!-- Saves attribute names -->[h: attributeNames = json.fields(Attributes) ]<!-- Input window -->[h: StringOfNames = "Custom Roll," + attributeNames + "," + STRskillNames ][h: status = input(strformat("selected|%{StringOfNames}|Select your skill|LIST"))][h: abort(status)]<!-- Switch tree for SL -->[h: attributesEndIndex = json.length(Attributes) ]<!-- Custom Roll -->[h, if(selected == 0), code: { 	[inputType = "custom"]		[status = input("customName| Custom Roll | Name your roll | TEXT |") ]	[abort(status)]	[status = input("customSL| 10 | Write your Skill Level") ]	[abort(status)]	<!-- Input replacement -->		[h, foreach(symbol, Symbols), code: {		[str = strformat("\\%s", symbol)] 				[replacement = strformat("\\%s", json.get(Symbols, symbol) ) ]			[customSL = replace(customSL, str, replacement)]		[customSL = replace(customSL, "\\+", "")]		[customSL = replace(customSL, "\\-", "")]	} ]	[if(!isNumber(customSL)) : 	assert(0, "Error: Your custom Skill Level isn't a number!", 0) ]	[SL = customSL]} ]<!-- Attributes -->[h, if(selected >= 1 && selected <= attributesEndIndex), code : { 	[inputType = "attr"]	<!-- Finds the appropriate attribute -->	[selectedAttributeName = listGet(StringOfNames, selected)]		[selectedAttributeLevel = json.get(Attributes, selectedAttributeName)]	[SL = selectedAttributeLevel ]} ]<!-- Skills -->[h, if(selected > attributesEndIndex), code: {	[inputType = "skill"]		<!-- Finds the appropriate skill -->		[indexOfSelectedSkill = selected - attributesEndIndex - 1]		[selectedSkill = json.get(SkillArray, indexOfSelectedSkill) ]	<!-- Checks for the SheetType and finds the appropriate skill level -->		[switch(SheetType), code: 		case "GCS": {			[calc = json.get(selectedSkill, "calc") ]				[SL = json.get(calc, "level") ]		};		case "GCA": { 			[SL = json.get(selectedSkill, "level") ] 		};		default: { <!-- checks for false! --> 			[assert(0, "Error: A correct SheetType property (GCA/GCS) isn't specified!", 0) ] 		} 	]} ]<!-- Modifiers input: -->[h: status = input("modSTR|0|Roll Modifiers")][h: abort(status)]<!-- Input replacement -->[h, foreach(symbol, Symbols), code: {	[str = strformat("\\%s", symbol)] 		[replacement = strformat("\\%s", json.get(Symbols, symbol) ) ]	[modSTR = replace(modSTR, str, replacement)]} ][h: modSTR = replace(modSTR, "\\++", "\\+") ][h: modSTR = replace(modSTR, "-+", "-") ]<!-- Checks input -->[h: IDfindBadChars = strfind(modSTR, "[+-]{1}[+-]{1}") ][h, if(getFindCount(IDfindBadChars) > 0) : isContainsBadChars =  1; isContainsBadChars =  0 ][if(isContainsBadChars) : 	assert(0, "Error: Your modifiers contains consecutive + and - signs!", 0) ][h: IDfindBadChars = strfind(modSTR, "[^+\\-0-9\\s]") ][h, if(getFindCount(IDfindBadChars) > 0) : isContainsBadChars =  1; isContainsBadChars =  0 ][if(isContainsBadChars) : 	assert(0, "Error: Your modifiers contain symbols other than +, -, 0-9, space, or their corresponding symbols!", 0) ]<!-- -->[h, if(modSTR == "+" || modSTR == "-") : modSTR = modSTR + "1"][h: modIsNumber = isNumber(modSTR)][h, if(modIsNumber) : mod = modSTR ; mod = eval(modSTR)]<!-- Rolling: --><!-- Init -->[h: Skill = SL + mod ][h: Rolled = 3d6 ][h: MoS = absolutevalue(Skill - Rolled) ] [h, if(Skill < 16) : CritFailThreshold = min(Skill + 10, 17); CritFailThreshold = 18 ][h: CritSuccessThreshold = max( min(Skill - 10, 6), 4) ][h, if(Rolled <= min(Skill, 16) ) : SuccessCheck =  1; SuccessCheck =  0 ][h, if(SuccessCheck && Rolled <= CritSuccessThreshold ) : CritSuccessCheck = 1; CritSuccessCheck =  0 ][h, if(SuccessCheck < 1 && Rolled >= CritFailThreshold ) : CritFailureCheck =  1; CritFailureCheck =  0 ][h, if(Skill >= 17 && !SuccessCheck): failureUnderEffectiveSkill = 1 ;  failureUnderEffectiveSkill = 0 ]<!-- Output text: -->[h: Output = "&#8232;<wbr>"][h: selectedSkillName = listGet(StringOfNames, selected)][h, switch(inputType): 	case "custom":	nonBreakableSelectedName = add("&ldquo;", replace(customName, " ", "&nbsp;"), "&rdquo;", "&#8288;") ;		case "attr": 	nonBreakableSelectedName = add(replace(selectedAttributeName, " ", "&nbsp;"), "&#8288;") ;		case "skill": 	nonBreakableSelectedName = add(replace(selectedSkillName, " ", "&nbsp;"), "&#8288;") ;	default:	assert(0, "Error: Not a correct inputType", 0)][h: Output = Output + nonBreakableSelectedName + "&ndash;&#8288;" + SL + if(!modIsNumber || mod != 0, ", ", "<wbr>") ]<!-- Decides on adding a line and a sign for the modifiers -->[h, if (startsWith(modSTR, "+") || startsWith(modSTR, "-") ): hasSign = 1; hasSign = 0 ][if(modIsNumber), code: {	[if(mod != 0), code: {		[h: Output = Output +		"modifier:&nbsp;" +		if(mod > 0, "+" + mod, mod ) ]		} ] 	};	{	  	[h: Output = Output +	"modifiers:&nbsp;" +	 if(!hasSign, "+" + modSTR, modSTR) ]	}][h: Output = Output + "  =>&nbsp;&nbsp;" ][h: Output = Output + "<b><span title='Rolled'>" + Rolled + "</span></b>&nbsp;vs&nbsp;<b><span title='Effective Skill'>(" + Skill + ")</span></b>:" ]<!-- Displays the correct line for the resulting degree of success-->[h, if(CritSuccessCheck): Output = Output + " <font color = '#00CF00'>CRITICALLY&nbsp;SUCCEEDED</font>&nbsp;" ][h, if(CritFailureCheck): Output = Output + " <font color = 'red'>CRITICALLY&nbsp;FAILED</font>&nbsp;" ][h, if(SuccessCheck && !CritSuccessCheck): Output = Output + " <font color = 'blue'>succeeded</font>&nbsp;" ][h, if(!SuccessCheck && !CritFailureCheck): Output = Output + " <font color = 'orange'>failed</font>&nbsp;" ]<!-- Displays the margin of success -->[h, if(!CritFailureCheck && !failureUnderEffectiveSkill ): Output = Output + "by&nbsp;<b>" + MoS + "&nbsp;</b>" ][r: Output][h:macro.return = Output]
+<!-- A MapTool macro for rolling from JSON and more for GURPS by Emdis -->
+
+[h: SkillArray = getProperty("skills") ]
+
+[h: Attributes = json.set("{}", "ST", getProperty("ST"), "DX", getProperty("DX"), "IQ", getProperty("IQ"), "HT", getProperty("HT"), "Will", getProperty("Will"), "Per", getProperty("Per") ) ]
+
+[h: skillNames = "[]" ]
+
+[h: Symbols = json.set("{}",
+	"\=", "+", 
+	"\_", "-",
+	"\!", "1",
+	"\@", "2",
+	"\#", "3",
+	"\$", "4",
+	"\%", "5",
+	"\^", "6",
+	"\&", "7",
+	"\*", "8",
+	"\(", "9",
+	"\)", "0"
+) ]
+
+<!-- Iterates skill objects inside the SkillArray and saves their names -->
+
+[h, foreach(skill, SkillArray), code: 
+	{
+	[h: curName = json.get(skill,"name") ]
+	
+	[h: skillNames = json.append(skillNames, curName) ]
+	}
+]
+
+[h: STRskillNames = json.toList(skillNames) ]
+
+<!-- Saves attribute names -->
+
+[h: attributeNames = json.fields(Attributes) ]
+
+<!-- Input window -->
+
+[h: StringOfNames = "Custom Roll," + attributeNames + "," + STRskillNames ]
+
+[h: status = input(strformat("selected|%{StringOfNames}|Select your skill|LIST"))]
+
+[h: abort(status)]
+
+
+<!-- Switch tree for SL -->
+
+[h: attributesEndIndex = json.length(Attributes) ]
+
+<!-- Custom Roll -->
+
+[h, if(selected == 0), code: { 
+	[inputType = "custom"]
+	
+	[status = input("customName| Custom Roll | Name your roll | TEXT |") ]
+	[abort(status)]
+
+	[status = input("customSL| 10 | Write your Skill Level") ]
+	[abort(status)]
+
+	<!-- Input replacement -->
+	
+	[h, foreach(symbol, Symbols), code: {
+		[str = strformat("\\%s", symbol)] 
+		
+		[replacement = strformat("\\%s", json.get(Symbols, symbol) ) ]
+	
+		[customSL = replace(customSL, str, replacement)]
+		[customSL = replace(customSL, "\\+", "")]
+		[customSL = replace(customSL, "\\-", "")]
+	} ]
+
+
+	[if(!isNumber(customSL)) : 
+	assert(0, "Error: Your custom Skill Level isn't a number!", 0) ]
+
+	[SL = customSL]
+} ]
+
+<!-- Attributes -->
+
+[h, if(selected >= 1 && selected <= attributesEndIndex), code : { 
+	[inputType = "attr"]
+
+	<!-- Finds the appropriate attribute -->
+
+	[selectedAttributeName = listGet(StringOfNames, selected)]
+	
+	[selectedAttributeLevel = json.get(Attributes, selectedAttributeName)]
+
+	[SL = selectedAttributeLevel ]
+} ]
+
+<!-- Skills -->
+
+[h, if(selected > attributesEndIndex), code: {
+	[inputType = "skill"]
+	
+	<!-- Finds the appropriate skill -->
+	
+	[indexOfSelectedSkill = selected - attributesEndIndex - 1]
+	
+	[selectedSkill = json.get(SkillArray, indexOfSelectedSkill) ]
+
+	<!-- Checks for the SheetType and finds the appropriate skill level -->
+	
+	[switch(SheetType), code: 
+		case "GCS": {
+			[calc = json.get(selectedSkill, "calc") ]
+	
+			[SL = json.get(calc, "level") ]
+		};
+		case "GCA": { 
+			[SL = json.get(selectedSkill, "level") ] 
+		};
+		default: { <!-- checks for false! --> 
+			[assert(0, "Error: A correct SheetType property (GCA/GCS) isn't specified!", 0) ] 
+		} 
+	]
+} ]
+
+<!-- Modifiers input: -->
+
+[h: status = input("modSTR|0|Roll Modifiers")]
+[h: abort(status)]
+
+<!-- Input replacement -->
+
+[h, foreach(symbol, Symbols), code: {
+	[str = strformat("\\%s", symbol)] 
+	
+	[replacement = strformat("\\%s", json.get(Symbols, symbol) ) ]
+
+	[modSTR = replace(modSTR, str, replacement)]
+} ]
+[h: modSTR = replace(modSTR, "\\++", "\\+") ]
+[h: modSTR = replace(modSTR, "-+", "-") ]
+
+<!-- Checks input -->
+
+[h: IDfindBadChars = strfind(modSTR, "[+-]{1}[+-]{1}") ]
+[h, if(getFindCount(IDfindBadChars) > 0) : isContainsBadChars =  1; isContainsBadChars =  0 ]
+[if(isContainsBadChars) : 
+	assert(0, "Error: Your modifiers contains consecutive + and - signs!", 0) ]
+
+[h: IDfindBadChars = strfind(modSTR, "[^+\\-0-9\\s]") ]
+[h, if(getFindCount(IDfindBadChars) > 0) : isContainsBadChars =  1; isContainsBadChars =  0 ]
+[if(isContainsBadChars) : 
+	assert(0, "Error: Your modifiers contain symbols other than +, -, 0-9, space, or their corresponding symbols!", 0) ]
+
+<!-- -->
+
+[h, if(modSTR == "+" || modSTR == "-") : modSTR = modSTR + "1"]
+
+[h: modIsNumber = isNumber(modSTR)]
+
+[h, if(modIsNumber) : mod = modSTR ; mod = eval(modSTR)]
+
+
+<!-- Rolling: -->
+
+<!-- Init -->
+
+[h: Skill = SL + mod ]
+[h: Rolled = 3d6 ]
+[h: MoS = absolutevalue(Skill - Rolled) ] 
+
+[h, if(Skill < 16) : CritFailThreshold = min(Skill + 10, 17); CritFailThreshold = 18 ]
+
+[h: CritSuccessThreshold = max( min(Skill - 10, 6), 4) ]
+
+[h, if(Rolled <= min(Skill, 16) ) : SuccessCheck =  1; SuccessCheck =  0 ]
+
+[h, if(SuccessCheck && Rolled <= CritSuccessThreshold ) : CritSuccessCheck = 1; CritSuccessCheck =  0 ]
+
+[h, if(SuccessCheck < 1 && Rolled >= CritFailThreshold ) : CritFailureCheck =  1; CritFailureCheck =  0 ]
+
+[h, if(Skill >= 17 && !SuccessCheck): failureUnderEffectiveSkill = 1 ;  failureUnderEffectiveSkill = 0 ]
+
+
+<!-- Output text: -->
+[h: Output = "&#8232;<wbr>"]
+
+[h: selectedSkillName = listGet(StringOfNames, selected)]
+
+[h, switch(inputType): 
+	case "custom":
+	nonBreakableSelectedName = add("&ldquo;", replace(customName, " ", "&nbsp;"), "&rdquo;", "&#8288;") ;
+	
+	case "attr": 
+	nonBreakableSelectedName = add(replace(selectedAttributeName, " ", "&nbsp;"), "&#8288;") ;
+	
+	case "skill": 
+	nonBreakableSelectedName = add(replace(selectedSkillName, " ", "&nbsp;"), "&#8288;") ;
+
+	default:
+	assert(0, "Error: Not a correct inputType", 0)
+]
+
+[h: Output = Output + nonBreakableSelectedName + "&ndash;&#8288;" + SL + if(!modIsNumber || mod != 0, ", ", "<wbr>") ]
+
+<!-- Decides on adding a line and a sign for the modifiers -->
+
+[h, if (startsWith(modSTR, "+") || startsWith(modSTR, "-") ): hasSign = 1; hasSign = 0 ]
+
+[if(modIsNumber), code: {
+	[if(mod != 0), code: {
+		[h: Output = Output +
+		"modifier:&nbsp;" +
+		if(mod > 0, "+" + mod, mod ) ]
+		} ] 
+	};
+	{	
+  	[h: Output = Output +
+	"modifiers:&nbsp;" +
+	 if(!hasSign, "+" + modSTR, modSTR) ]
+	}
+]
+
+[h: Output = Output + "  =>&nbsp;&nbsp;" ]
+
+[h: Output = Output + 
+"<b><span title='Rolled'>" + Rolled + "</span></b>&nbsp;vs&nbsp;<b><span title='Effective Skill'>(" + Skill + ")</span></b>:" ]
+
+<!-- Displays the correct line for the resulting degree of success-->
+
+[h, if(CritSuccessCheck): 
+Output = Output + " <font color = '#00CF00'>CRITICALLY&nbsp;SUCCEEDED</font>&nbsp;" ]
+
+[h, if(CritFailureCheck): 
+Output = Output + " <font color = 'red'>CRITICALLY&nbsp;FAILED</font>&nbsp;" ]
+
+[h, if(SuccessCheck && !CritSuccessCheck): 
+Output = Output + " <font color = 'blue'>succeeded</font>&nbsp;" ]
+
+[h, if(!SuccessCheck && !CritFailureCheck): 
+Output = Output + " <font color = 'orange'>failed</font>&nbsp;" ]
+
+<!-- Displays the margin of success -->
+
+[h, if(!CritFailureCheck && !failureUnderEffectiveSkill ): 
+Output = Output + "by&nbsp;<b>" + MoS + "&nbsp;</b>" ]
+
+
+[h:macro.return = Output]
