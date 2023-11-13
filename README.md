@@ -10,9 +10,8 @@ Displays colored crits; margin of success or failure.
 
 Can be used for blind rolls through ` [gm:] ` with the included calling macro.
 
-## Possible output:
-ST⁠–10, modifiers: +2+3-2 -1+10 =>  10 vs (22): succeeded by 12  
-
+## Possible output
+` ST⁠–10, modifiers: +2+3-2 -1+10 =>  10 vs (22): succeeded by 12 `
 ------------------------------------------------------------------------------------------
 ## GCA
 
@@ -39,7 +38,7 @@ ST⁠–10, modifiers: +2+3-2 -1+10 =>  10 vs (22): succeeded by 12 
 
 ------------------------------------------------------------------------------------------
 
-## Input Filtering for the Modifier window:
+## Input Filtering for the Modifier window
 
 - Accepts strings with addition and substraction.
 - Accepts any symbols on the number row and replaces them with correct numbers and signs.
@@ -51,7 +50,7 @@ ST⁠–10, modifiers: +2+3-2 -1+10 =>  10 vs (22): succeeded by 12 
 - Throws an error for "+-" combinations.
 - Throws an error for incorrect symbols.
 
-## Input Filtering for the Custom SL window: 
+## Input Filtering for the Custom SL window
 
 - Must be a number
 - Accepts any symbols on the number row and replaces them with correct numbers and signs.
@@ -61,13 +60,13 @@ ST⁠–10, modifiers: +2+3-2 -1+10 =>  10 vs (22): succeeded by 12 
 
 ------------------------------------------------------------------------------------------
 
-## Import:
+## Import
 
 - Import the macro set ` .mtmacset `by rightclicking on a macro panel in MapTool.
 
 ------------------------------------------------------------------------------------------
 
-## Use tips:
+## Use tips
 
 - ` Alt + Down Arrow ` to open the drop-down menu.
 - The calling macros are going to work as long as the Backend macro is in the same library.
