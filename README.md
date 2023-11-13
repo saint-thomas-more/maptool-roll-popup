@@ -71,7 +71,7 @@ Can be used for blind rolls through ` [gm:] ` with the included calling macro.
 - Import the macro set ` .mtmacset `by rightclicking on a macro panel in MapTool.
 
 ***
-## Use tips
+## Usage tips
 
 1. Impersonate a token
 2. Choose a `Roll` or a `Blind Roll` calling macro
