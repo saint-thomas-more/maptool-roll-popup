@@ -32,9 +32,10 @@ Can be used for blind rolls through ` [gm:] ` with the included calling macro.
 ## MapTool properties
 
 - Takes individual attribute properties for the input with the regular GURPS short names.
-- Input for the skills property: 
+- Requires a ` skills ` property.
+- Input for the ` skills ` property: 
 	` [ {skill-object}, {skill-object}, ... ] `
-- Requires a ` SheetType ` property with "GCA" or "GCS" listed (without quotes).
+- Requires a ` SheetType ` property with ` GCA ` or ` GCS ` listed.
 
 ***
 
