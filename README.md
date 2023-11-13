@@ -12,7 +12,7 @@ Can be used for blind rolls through ` [gm:] ` with the included calling macro.
 
 ## Possible output
 ` ST⁠–10, modifiers: +2+3-2 -1+10 =>  10 vs (22): succeeded by 12 `
-------------------------------------------------------------------------------------------
+***
 ## GCA
 
 `.gdf` files are `.xml` under-the-hood and must be converted to `.json`.
@@ -36,7 +36,7 @@ Can be used for blind rolls through ` [gm:] ` with the included calling macro.
 	` [ {skill-object}, {skill-object}, ... ] `
 - Requires a ` SheetType ` property with "GCA" or "GCS" listed (without quotes).
 
-------------------------------------------------------------------------------------------
+***
 
 ## Input Filtering for the Modifier window
 
@@ -58,14 +58,13 @@ Can be used for blind rolls through ` [gm:] ` with the included calling macro.
 
 - Throws an error if the filtered result isn't a number.
 
-------------------------------------------------------------------------------------------
+***
 
 ## Import
 
 - Import the macro set ` .mtmacset `by rightclicking on a macro panel in MapTool.
 
-------------------------------------------------------------------------------------------
-
+***
 ## Use tips
 
 - ` Alt + Down Arrow ` to open the drop-down menu.
