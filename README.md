@@ -19,15 +19,15 @@ Can be used for blind rolls through ` [gm:] ` with the included calling macro.
 
 ## GCS
 
-`.gcs` files are `.json` under-the-hood
+`.gcs` files are `.json` under-the-hood.
 
 ## Ripping the skills array
 
-- Open `.json` in Notepad.
+- Open your `.json` in Notepad, for example.
 - Find the array:
-	` "skills": [...] `
-- Copy the brackets and their content
-- Paste into the property
+	` "skills": [...] `.
+- Copy the brackets and their content.
+- Paste into the property.
 
 ## MapTool properties
 
