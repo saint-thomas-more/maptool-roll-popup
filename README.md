@@ -37,7 +37,6 @@ Can be used for blind rolls through ` [gm:] ` with the included calling macro.
 
 ## MapTool properties
 
-- Properties
 - Takes individual attribute properties for the input with the regular GURPS short names, i.e.:
 	- ST
 	- DX
