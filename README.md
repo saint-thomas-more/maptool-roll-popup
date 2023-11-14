@@ -25,6 +25,7 @@ Can be used for blind rolls through ` [gm:] ` with the included calling macro.
 ## GCS
 
 `.gcs` files are `.json` under-the-hood.
+- The sheet must not contain skill containers as they complicate the ` .json ` sctructure.
 
 ## Ripping the skills array
 
@@ -36,9 +37,16 @@ Can be used for blind rolls through ` [gm:] ` with the included calling macro.
 
 ## MapTool properties
 
-- Takes individual attribute properties for the input with the regular GURPS short names.
-- Requires a ` skills ` property.
-- Input for the ` skills ` property: 
+- Properties
+- Takes individual attribute properties for the input with the regular GURPS short names, i.e.:
+	- ST
+	- DX
+ 	- IQ
+  	- HT
+  	- Will
+  	- Per 
+- Requires a ` Skills ` property (isn't case sensitive).
+- Input for the ` Skills ` property: 
 	` [ {skill-object}, {skill-object}, ... ] `
 - Requires a ` SheetType ` property with ` GCA ` or ` GCS ` listed.
 
@@ -79,3 +87,6 @@ Can be used for blind rolls through ` [gm:] ` with the included calling macro.
 - ` Alt + Down Arrow ` to open the drop-down menu.
 - The calling macros are going to work as long as the Backend macro is in the same library.
 - ` [r: Output] ` can be included in the end to turn into a self-sufficient rolling macro.
+
+***
+<sub><sub>Disclaimer: <a href="http://www.sjgames.com/gurps/"><b><i>GURPS</i></b></a> is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games. All rights are reserved by Steve Jackson Games. This game aid is the original creation of mine and is released for free distribution, and not for resale, under the permissions granted in the <a href="http://www.sjgames.com/general/online_policy.html">Steve Jackson Games Online Policy</a>.</sub></sub>
