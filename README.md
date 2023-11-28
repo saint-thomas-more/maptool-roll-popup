@@ -58,6 +58,7 @@ Can be used for blind rolls through ` [gm:] ` with the included calling macro.
 ` _@=& ` becomes `-2+7 `.
 - Accepts spaces.
 - Accepts repeating signs and replaces them with a singular sign.
+- Accepts "+" or "-" as an input and turns it into "+1" or "-1".
 - The first number can be written without a sign. Adds "+" in this case.
 
 - Throws an error for "+-" combinations.
